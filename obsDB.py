@@ -10,6 +10,7 @@ Takes a CSV file and creates files for each entry (based on optional criteria).
 
 '''
 
+# symlink: mklink data C:\Users\Rose\Sync\career\notes\js2024\obs-data
 
 # IMPORTS #
 ###########
@@ -33,7 +34,7 @@ class colors:
 	endc = '\033[0m'
 
 
-jobTable = pd.read_csv("posting-table-demo.csv",	# csv file
+jobTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
 					sep=",",					# character used to delimit columns
 					quotechar='"',				# character used to quote strings
 					skipinitialspace=True,		# True if a space is added after each column delimiter
@@ -41,13 +42,6 @@ jobTable = pd.read_csv("posting-table-demo.csv",	# csv file
 
 
 timeNow = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-
-for fileName,info in jobTable.iterrows():
-	wpCode = jobTable.at[fileName, 'WP Code']
-	file = wpCode+fileName
-	test = jobTable.at[fileName, 'Status']
-	space = " " * (10 - len(test))
-	print("TEST:", "["+test+"]"+space+"["+file+"]")
 
 
 def updatemeta(fileName, searchField, valNew, sizeCheck=True):
@@ -138,11 +132,22 @@ def updatemeta(fileName, searchField, valNew, sizeCheck=True):
 
 	try:
 		print("cleaning up...")
-		shutil.copy(os.path.join(os.getcwd(),newFile),"C:/Users/Rose/Sync/archive/metaupdate-tmp/")
+		shutil.copy(os.path.join(os.getcwd(),newFile),"C:/Users/Rose/Sync/coding/projects/obsDB/bkp-tmp/")
 		os.remove(os.path.join(os.getcwd(),newFile))
 	except Exception as e:
 		print("(updatemeta6) ERROR: ",e)
 		os.remove(os.path.join(os.getcwd(),newFile))
 
 
-print(timeNow)
+def test():
+	for fileName, info in jobTable.iterrows():
+		wpCode = jobTable.at[fileName, 'WP Code']
+		file = wpCode+"-"+fileName+".md"
+		# print(file)
+
+		if os.path.isfile(file) == True:
+			print(colors.green+file, "exists"+colors.endc)
+		else:
+			print(colors.red+file, "not found"+colors.endc)
+
+test()
