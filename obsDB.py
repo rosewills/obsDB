@@ -8,6 +8,8 @@ Status: not finished
 
 Takes a CSV file and creates files for each entry (based on optional criteria).
 
+conda activate obsdb
+
 '''
 
 # symlink: mklink data C:\Users\Rose\Sync\career\notes\js2024\obs-data
@@ -44,10 +46,11 @@ jobTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-ta
 timeNow = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
 
-def updatemeta(fileName, searchField, valNew, sizeCheck=True):
-	ignore = False
+def updatemeta(fileName, searchField, valNew, sizeCheck=True, dryrun=True, v=False, report=False):
+	ignore = dryrun
 	fileMod = os.stat(fileName).st_mtime
-	print("UPDATING YAML METADATA FOR", fileName)
+	if v == True:
+		print("UPDATING YAML METADATA FOR", fileName)
 
 	# findRegex = re.escape(field)+": .*"
 	# replRegex = re.escape(field)+": "+re.escape(valNew)
@@ -77,24 +80,34 @@ def updatemeta(fileName, searchField, valNew, sizeCheck=True):
 								match = re.match('^(.*?): (.*)', sline)
 								field = match.group(1)
 								value = match.group(2)
-								print("FIELD:", "["+field+"]\t"+"VALUE:", "["+value+"]")
+								# print("FIELD:", "["+field+"]\t"+"VALUE:", "["+value+"]")
 								try:
 									if field == searchField:
 										valOld = value
 										if valOld == valNew:
+											result = "match"
 											ignore = True
-											print("\tmetadata already updated/correct!")
-											print("\tvalOld:", valOld)
-											print("\tvalNew:", valNew)
+											print(colors.green+"metadata matches:"+colors.endc, fileName)
+											if v == True:
+												print("\tvalOld:", valOld)
+												print("\tvalNew:", valNew)
 										else:
-											print("updating ["+field+"] in",fileName)
-											print("from ["+valOld+"] to ["+valNew+"]...")
-											# line = re.sub(findRegex, replRegex, line)
-											line = re.sub(rf"^{field}: {valOld}", rf"{field}: {valNew}", line)
+											result = "diff"
+											if dryrun == False:
+												print(colors.yellow+"updating ["+field+"] in",fileName+colors.endc)
+												print("from ["+valOld+"] to ["+valNew+"]...")
+												# line = re.sub(findRegex, replRegex, line)
+												line = re.sub(rf"^{field}: {valOld}", rf"{field}: {valNew}", line)
+											else:
+												print(colors.yellow+"metadata does mot match:"+colors.endc, fileName)
+												print("\tvalOld:", valOld)
+												print("\tvalNew:", valNew)
+
 								except Exception as e:
 									print("(updatemeta2) ERROR: ",e)
 							except:
-								print("cannot parse metadata line: ["+sline+"]")
+								if v == True:
+									print("cannot parse metadata line: ["+sline+"]")
 							field = ""
 					file.write(bytes(line, "UTF-8"))
 					# file.write(line)
@@ -124,30 +137,55 @@ def updatemeta(fileName, searchField, valNew, sizeCheck=True):
 			ignore = True
 	
 	if ignore == True:
-		print("original file untouched.")
+		if v == True:
+			print("original file untouched.")
 	else:
 		print("updating original file...")
 		shutil.copyfile(newFile, fileName)
 		os.utime(fileName, (fileMod,fileMod))
+		chngNum += 1
 
 	try:
-		print("cleaning up...")
+		if v == True:
+			print("cleaning up...")
 		shutil.copy(os.path.join(os.getcwd(),newFile),"C:/Users/Rose/Sync/coding/projects/obsDB/bkp-tmp/")
 		os.remove(os.path.join(os.getcwd(),newFile))
 	except Exception as e:
 		print("(updatemeta6) ERROR: ",e)
 		os.remove(os.path.join(os.getcwd(),newFile))
+	
+	if report == True:
+		return result
 
 
-def test():
-	for fileName, info in jobTable.iterrows():
-		wpCode = jobTable.at[fileName, 'WP Code']
+def matchCheck(df, dfField, yamlField, v=False):
+	matchCount = 0
+	diffCount = 0
+	notFound = []
+
+	for fileName, info in df.iterrows():
+		wpCode = df.at[fileName, 'WP Code']
 		file = wpCode+"-"+fileName+".md"
-		# print(file)
+
+		value = df.at[fileName, dfField]
 
 		if os.path.isfile(file) == True:
-			print(colors.green+file, "exists"+colors.endc)
+			count = updatemeta(file, yamlField, value, sizeCheck=False, report=True)
+			if count == "match":
+				matchCount += 1
+			elif count == "diff":
+				diffCount += 1
 		else:
-			print(colors.red+file, "not found"+colors.endc)
+			notFound.append(file)
 
-test()
+	print(colors.green+str(matchCount), "matches"+colors.endc)
+	print(colors.yellow+str(diffCount), "differences"+colors.endc)
+	print(colors.red+str(len(notFound)), "files do not exist"+colors.endc)
+
+	if v == True:
+		for entry in notFound:
+			print(colors.red+"\t"+entry+colors.endc)
+
+
+
+matchCheck(jobTable, 'Job Type', "job-type", v=True)
