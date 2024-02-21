@@ -22,6 +22,12 @@ import pandas as pd		# reading in and working with csv data
 import os
 from datetime import datetime
 import shutil
+import sys
+
+sys.path.insert(0, 'C:/Users/Rose/Sync/coding/scripts/utility')
+import metautils as mu
+
+
 
 # Pretty Colors for Terminal Output (Bash-specific)
 class colors:
@@ -47,114 +53,6 @@ jobTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-ta
 timeNow = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
 
-def updatemeta(filePath, searchField, valNew, sizeCheck=True, dryrun=True, v=False, report=False):
-	ignore = dryrun
-	fileName = os.path.basename(filePath)
-	fileMod = os.stat(filePath).st_mtime
-	if v == True:
-		print("UPDATING YAML METADATA FOR", filePath)
-
-	# findRegex = re.escape(field)+": .*"
-	# replRegex = re.escape(field)+": "+re.escape(valNew)
-	newFile = filePath+"-tmp"
-
-	with open(filePath, "r", encoding='utf-8') as file:
-		try:
-			lines = file.readlines()
-		except Exception as e:
-			# print("Error!")
-			print("(updatemeta1) ERROR: ",e)
-			lines = [""]
-			ignore = True
-		
-	with open(newFile, "wb") as file:
-		metaBlock = 0
-		try:
-			firstline = lines[0].strip()
-			if firstline == "---":
-				for line in lines:
-					sline = line.strip()
-					if metaBlock < 2:
-						if sline == "---":
-							metaBlock += 1
-						else:
-							try:
-								match = re.match('^(.*?): (.*)', sline)
-								field = match.group(1)
-								value = match.group(2)
-								# print("FIELD:", "["+field+"]\t"+"VALUE:", "["+value+"]")
-								try:
-									if field == searchField:
-										valOld = value
-										if valOld == valNew:
-											result = "match"
-											ignore = True
-											print(colors.green+"metadata matches:"+colors.endc, fileName)
-											if v == True:
-												print("\tvalOld:", valOld)
-												print("\tvalNew:", valNew)
-										else:
-											result = "diff"
-											if dryrun == False:
-												print(colors.yellow+"updating ["+field+"] in",fileName+colors.endc)
-												print("from ["+valOld+"] to ["+valNew+"]...")
-												# line = re.sub(findRegex, replRegex, line)
-												line = re.sub(rf"^{field}: {valOld}", rf"{field}: {valNew}", line)
-											else:
-												print(colors.yellow+"metadata does mot match:"+colors.endc, fileName)
-												print("\tvalOld:", valOld)
-												print("\tvalNew:", valNew)
-
-								except Exception as e:
-									print("(updatemeta2) ERROR: ",e)
-							except:
-								if v == True:
-									print("cannot parse metadata line: ["+sline+"]")
-							field = ""
-					file.write(bytes(line, "UTF-8"))
-					# file.write(line)
-
-			else:
-				print("(updatemeta3) ERROR: no YAML metadata block detected!")
-				print("                     first line: ["+firstline+"]")
-				print("                     (metadata block must must begin & end with \"---\"), and start on the first line of the file.")
-				ignore = True
-		except Exception as e:
-			# print("(updatemeta4) ERROR: file appears to be empty.")
-			print("(updatemeta4) ERROR: ",e)
-			ignore = True
-			
-	if sizeCheck == True:
-		origSize = os.stat(filePath).st_size
-		newSize = os.stat(newFile).st_size
-
-		print("SIZE CHECK:",origSize," (original file) ->",newSize,"(updated file)")
-		if origSize == newSize:
-			print(colors.green+"no errors detected."+colors.endc)
-		else:
-			print(colors.red+"(updatemeta5) ERROR: new file is not the same size as original file. (",origSize,"->",newSize,")"+colors.endc)
-			ignore = True
-	
-	if ignore == True:
-		if v == True:
-			print("original file untouched.")
-	else:
-		print("updating original file...")
-		shutil.copyfile(newFile, filePath)
-		os.utime(filePath, (fileMod,fileMod))
-
-	try:
-		if v == True:
-			print("cleaning up...")
-		shutil.copy(os.path.join(os.getcwd(),newFile),"C:/Users/Rose/Sync/coding/projects/obsDB/bkp-tmp/")
-		os.remove(os.path.join(os.getcwd(),newFile))
-	except Exception as e:
-		print("(updatemeta6) ERROR: ",e)
-		os.remove(os.path.join(os.getcwd(),newFile))
-	
-	if report == True:
-		return result
-
 
 def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
 	matchCount = 0
@@ -169,11 +67,13 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
 		value = df.at[fileName, dfField]
 
 		if os.path.isfile(filePath) == True:
-			umout = updatemeta(filePath, yamlField, value, sizeCheck=False, report=True, dryrun=dryrun)
+			umout = mu.updatemeta(filePath, yamlField, value, sizeCheck=False, report=True, dryrun=dryrun, v=v)
 			if umout == "match":
 				matchCount += 1
 			elif umout == "diff":
 				diffCount += 1
+				# if dryrun == False:
+				# 	mu.fixmeta(filePath)
 		else:
 			notFound.append(file)
 
