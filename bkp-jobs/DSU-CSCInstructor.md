@@ -8,7 +8,6 @@ aliases:
 workplace: "[[DSU]]"
 posted: 2024-01-24
 link: https://www.schooljobs.com/careers/desu/jobs/4361761/college-success-coach-instructor?sort=PostingDate%7CDescending&pagetype=jobOpportunitiesJobs
-job-type: Advisor
 status: 2_current
 progress: 
 star: false

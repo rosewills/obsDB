@@ -66,20 +66,20 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
 
 		value = df.at[fileName, dfField]
 
-		if os.path.isfile(filePath) == True:
-			umout = mu.updatemeta(filePath, yamlField, value, sizeCheck=False, report=True, dryrun=dryrun, v=v)
-			if umout == "match":
-				matchCount += 1
-			elif umout == "diff":
-				diffCount += 1
+		# if os.path.isfile(filePath) == True:
+		umout = mu.updatemeta(filePath, yamlField, value, sizeCheck=False, insert=True, report=True, dryrun=dryrun, v=v)
+		if umout == "match":
+			matchCount += 1
+		elif umout == "diff":
+			diffCount += 1
 				# if dryrun == False:
 				# 	mu.fixmeta(filePath)
-		else:
-			notFound.append(file)
+		# else:
+		# 	notFound.append(file)
 
 	print(colors.green+str(matchCount), "matches"+colors.endc)
 	print(colors.yellow+str(diffCount), "differences"+colors.endc)
-	print(colors.red+str(len(notFound)), "files do not exist"+colors.endc)
+	# print(colors.red+str(len(notFound)), "files do not exist"+colors.endc)
 
 	if v == True:
 		for entry in notFound:
