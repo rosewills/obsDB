@@ -8,7 +8,7 @@ aliases:
 workplace: "[[UBalt]]"
 posted: 2024-01-17
 link: https://www.ubalt.edu/about-ub/offices-and-services/human-resources/jobs-at-ub.cfm?type=staff&posting=1896
-job-type: Advisor
+job-type: Recruiter
 status: 1_stale
 ---
 # Description

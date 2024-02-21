@@ -36,6 +36,7 @@ class colors:
 	endc = '\033[0m'
 
 
+jobPath = "C:/Users/Rose/Sync/coding/projects/obsDB/jobs/"
 jobTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
 					sep=",",					# character used to delimit columns
 					quotechar='"',				# character used to quote strings
@@ -46,17 +47,18 @@ jobTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-ta
 timeNow = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
 
-def updatemeta(fileName, searchField, valNew, sizeCheck=True, dryrun=True, v=False, report=False):
+def updatemeta(filePath, searchField, valNew, sizeCheck=True, dryrun=True, v=False, report=False):
 	ignore = dryrun
-	fileMod = os.stat(fileName).st_mtime
+	fileName = os.path.basename(filePath)
+	fileMod = os.stat(filePath).st_mtime
 	if v == True:
-		print("UPDATING YAML METADATA FOR", fileName)
+		print("UPDATING YAML METADATA FOR", filePath)
 
 	# findRegex = re.escape(field)+": .*"
 	# replRegex = re.escape(field)+": "+re.escape(valNew)
-	newFile = fileName+"-tmp"
+	newFile = filePath+"-tmp"
 
-	with open(fileName, "r", encoding='utf-8') as file:
+	with open(filePath, "r", encoding='utf-8') as file:
 		try:
 			lines = file.readlines()
 		except Exception as e:
@@ -122,13 +124,10 @@ def updatemeta(fileName, searchField, valNew, sizeCheck=True, dryrun=True, v=Fal
 			print("(updatemeta4) ERROR: ",e)
 			ignore = True
 			
-	# os.utime(newFile, (fileMod,fileMod))
-	origSize = os.stat(fileName).st_size
-	# print("origSize:", origSize)
-	newSize = os.stat(newFile).st_size
-	# print("newSize:", newSize)
-
 	if sizeCheck == True:
+		origSize = os.stat(filePath).st_size
+		newSize = os.stat(newFile).st_size
+
 		print("SIZE CHECK:",origSize," (original file) ->",newSize,"(updated file)")
 		if origSize == newSize:
 			print(colors.green+"no errors detected."+colors.endc)
@@ -141,9 +140,8 @@ def updatemeta(fileName, searchField, valNew, sizeCheck=True, dryrun=True, v=Fal
 			print("original file untouched.")
 	else:
 		print("updating original file...")
-		shutil.copyfile(newFile, fileName)
-		os.utime(fileName, (fileMod,fileMod))
-		chngNum += 1
+		shutil.copyfile(newFile, filePath)
+		os.utime(filePath, (fileMod,fileMod))
 
 	try:
 		if v == True:
@@ -158,7 +156,7 @@ def updatemeta(fileName, searchField, valNew, sizeCheck=True, dryrun=True, v=Fal
 		return result
 
 
-def matchCheck(df, dfField, yamlField, v=False):
+def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
 	matchCount = 0
 	diffCount = 0
 	notFound = []
@@ -166,14 +164,15 @@ def matchCheck(df, dfField, yamlField, v=False):
 	for fileName, info in df.iterrows():
 		wpCode = df.at[fileName, 'WP Code']
 		file = wpCode+"-"+fileName+".md"
+		filePath = os.path.join(jobPath, file)
 
 		value = df.at[fileName, dfField]
 
-		if os.path.isfile(file) == True:
-			count = updatemeta(file, yamlField, value, sizeCheck=False, report=True)
-			if count == "match":
+		if os.path.isfile(filePath) == True:
+			umout = updatemeta(filePath, yamlField, value, sizeCheck=False, report=True, dryrun=dryrun)
+			if umout == "match":
 				matchCount += 1
-			elif count == "diff":
+			elif umout == "diff":
 				diffCount += 1
 		else:
 			notFound.append(file)
@@ -188,4 +187,4 @@ def matchCheck(df, dfField, yamlField, v=False):
 
 
 
-matchCheck(jobTable, 'Job Type', "job-type", v=True)
+matchCheck(jobTable, 'Job Type', "job-type", v=True, dryrun=False)

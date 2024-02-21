@@ -8,7 +8,7 @@ aliases:
 workplace: "[[UMBC]]"
 posted: 2023-08-15
 link: https://listings.umbc.edu/cw/en-us/job/494256/program-coordinator-juniorsenior-advising
-job-type: Advisor
+job-type: Administrator
 status: 0_past
 progress: not started
 star: false
