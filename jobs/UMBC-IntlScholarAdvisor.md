@@ -5,6 +5,7 @@ tags:
   - listing
 aliases:
   - International Student & Scholar Advisor
+  - International Student and Scholar Advisor
 workplace: "[[UMBC]]"
 posted: 2023-12-11
 link: https://listings.umbc.edu/cw/en-us/job/494389/international-student-and-scholar-advisor

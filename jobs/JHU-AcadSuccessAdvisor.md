@@ -8,7 +8,7 @@ aliases:
 workplace: "[[JHU]]"
 posted: 2024-01-12
 link: https://jobs.jhu.edu/job/Baltimore-Academic-and-Student-Success-Advisor-MD-21211/1118194400/
-job-type: Recruiter
+job-type: Advisor
 status: 1_stale
 ---
 # Description

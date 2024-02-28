@@ -5,6 +5,7 @@ tags:
   - listing
 aliases:
   - Registration Adminstrator
+  - Registration Administrator
 workplace: "[[JHU]]"
 posted: 2024-01-24
 link: https://jobs.jhu.edu/job/Baltimore-Registration-Administrator-MD-21218/1123301400/

@@ -8,7 +8,7 @@ aliases:
 workplace: "[[JHU]]"
 posted: 2024-02-01
 link: https://jobs.jhu.edu/job/Baltimore-Admissions-Officer-MD-21218/1105048300/
-job-type: Recruiter
+job-type: Coordinator
 status: 1_stale
 progress: 2 angled
 star: true

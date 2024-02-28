@@ -8,7 +8,7 @@ aliases:
 workplace: "[[UMBC]]"
 posted: 2024-01-02
 link: https://listings.umbc.edu/cw/en-us/job/494407/program-management-specialist
-job-type: Coordinator
+job-type: Administrator
 status: 1_stale
 ---
 # Description

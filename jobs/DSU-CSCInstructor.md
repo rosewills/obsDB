@@ -11,7 +11,6 @@ link: https://www.schooljobs.com/careers/desu/jobs/4361761/college-success-coach
 status: 2_current
 progress: 
 star: false
-job-type: Coordinator
 ---
 # Description
 

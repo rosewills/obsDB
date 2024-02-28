@@ -5,6 +5,7 @@ tags:
   - listing
 aliases:
   - Academic Advisor (Psychology)
+  - Academic Advisor (Psych)
 workplace: "[[UMD]]"
 posted: 2024-01-18
 link: https://ejobs.umd.edu/postings/116229

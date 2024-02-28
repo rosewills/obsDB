@@ -24,7 +24,7 @@ from datetime import datetime
 import shutil
 import sys
 
-sys.path.insert(0, 'C:/Users/Rose/Sync/coding/scripts/utility')
+sys.path.insert(0, 'C:/Users/Rose/Sync/coding/scripts/modules')
 import metautils as mu
 
 
@@ -41,9 +41,17 @@ class colors:
 	underline = '\033[4m'
 	endc = '\033[0m'
 
+# syncFields = {
+# 	"WP Code": "workplace",
+# 	"Position": "",
+# 	"Job Type": "job-type",
+# 	"Posted Date": "",
+# 	"Status": "",
+# 	"Link": "",
 
-jobPath = "C:/Users/Rose/Sync/coding/projects/obsDB/jobs/"
-jobTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
+# }
+dbPath = "C:/Users/Rose/Sync/coding/projects/obsDB/jobs/"
+dbTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
 					sep=",",					# character used to delimit columns
 					quotechar='"',				# character used to quote strings
 					skipinitialspace=True,		# True if a space is added after each column delimiter
@@ -54,7 +62,7 @@ timeNow = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
 
 
-def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
+def matchCheck(df, dfField, yamlField, v=False, dryrun=True, listVals=False):
 	matchCount = 0
 	diffCount = 0
 	notFound = []
@@ -62,12 +70,12 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
 	for fileName, info in df.iterrows():
 		wpCode = df.at[fileName, 'WP Code']
 		file = wpCode+"-"+fileName+".md"
-		filePath = os.path.join(jobPath, file)
+		filePath = os.path.join(dbPath, file)
 
 		value = df.at[fileName, dfField]
 
 		# if os.path.isfile(filePath) == True:
-		umout = mu.updatemeta(filePath, yamlField, value, sizeCheck=False, insert=True, report=True, dryrun=dryrun, v=v)
+		umout = mu.updatemeta(filePath, yamlField, value, sizeCheck=False, insert=True, report=True, dryrun=dryrun, v=v, listVals=listVals)
 		if umout == "match":
 			matchCount += 1
 		elif umout == "diff":
@@ -87,4 +95,9 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True):
 
 
 
-matchCheck(jobTable, 'Job Type', "job-type", v=True, dryrun=False)
+matchCheck(dbTable, 'Position', "aliases", v=False, dryrun=False, listVals=True)
+# matchCheck(dbTable, 'WP Code', "workplace", v=False, dryrun=False)
+# matchCheck(dbTable, 'Job Type', "job-type", v=False, dryrun=False)
+# matchCheck(dbTable, 'Posted Date', "posted", v=False, dryrun=False)
+# matchCheck(dbTable, 'Status', "status", v=False, dryrun=False)
+# matchCheck(dbTable, 'Link', "link", v=False, dryrun=False)
