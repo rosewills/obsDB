@@ -48,8 +48,10 @@ class colors:
 # 	"Link": "",
 
 # }
-dbPath = "C:/Users/Rose/Sync/coding/projects/obsDB/jobs/"
-dbTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
+# dbPath = "C:/Users/Rose/Sync/coding/projects/obsDB/jobs/"
+# dbTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
+dbPath = "C:/Users/Rose/Sync/career/notes/js2024/jobs/"
+dbTable = pd.read_csv("C:/Users/Rose/Sync/career/notes/js2024/posting-table2.4lin.csv",	# csv file
 					sep=",",					# character used to delimit columns
 					quotechar='"',				# character used to quote strings
 					skipinitialspace=True,		# True if a space is added after each column delimiter
