@@ -23,8 +23,6 @@ import os
 from datetime import datetime
 import shutil
 import sys
-
-sys.path.insert(0, 'C:/Users/Rose/Sync/coding/scripts/modules')
 import metautils as mu
 
 
