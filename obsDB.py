@@ -68,7 +68,7 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True, listVals=False):
 	notFound = []
 
 	for fileName, info in df.iterrows():
-		wpCode = df.at[fileName, 'WP Code']
+		wpCode = df.at[fileName, 'WP Code'].replace("[","").replace("]","").replace("\"","")
 		file = wpCode+"-"+fileName+".md"
 		filePath = os.path.join(dbPath, file)
 
@@ -95,9 +95,10 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True, listVals=False):
 
 
 
-matchCheck(dbTable, 'Position', "aliases", v=False, dryrun=False, listVals=True)
+# matchCheck(dbTable, 'Position', "aliases", v=False, dryrun=False, listVals=True)
 # matchCheck(dbTable, 'WP Code', "workplace", v=False, dryrun=False)
 # matchCheck(dbTable, 'Job Type', "job-type", v=False, dryrun=False)
-# matchCheck(dbTable, 'Posted Date', "posted", v=False, dryrun=False)
+matchCheck(dbTable, 'Posted Date', "posted", v=False, dryrun=False)
 # matchCheck(dbTable, 'Status', "status", v=False, dryrun=False)
 # matchCheck(dbTable, 'Link', "link", v=False, dryrun=False)
+# matchCheck(dbTable, "tags", "tags", v=False, dryrun=False, listVals=True)
