@@ -13,6 +13,7 @@ conda activate obsdb
 '''
 
 # symlink: mklink data C:\Users\Rose\Sync\career\notes\js2024\obs-data
+# for file in * ; do if test -f ../archive/jobs/$file ; then cp ../archive/jobs/$file old-$file ; fi ; done
 
 # IMPORTS #
 ###########
@@ -39,27 +40,16 @@ class colors:
 	underline = '\033[4m'
 	endc = '\033[0m'
 
-# syncFields = {
-# 	"WP Code": "workplace",
-# 	"Position": "",
-# 	"Job Type": "job-type",
-# 	"Posted Date": "",
-# 	"Status": "",
-# 	"Link": "",
-
-# }
 # dbPath = "C:/Users/Rose/Sync/coding/projects/obsDB/jobs/"
 # dbTable = pd.read_csv("C:/Users/Rose/Sync/coding/projects/obsDB/data/posting-table-demo.csv",	# csv file
 dbPath = "C:/Users/Rose/Sync/career/notes/js2024/jobs/"
-dbTable = pd.read_csv("C:/Users/Rose/Sync/career/notes/js2024/posting-table2.4lin.csv",	# csv file
+dbTable = pd.read_csv("C:/Users/Rose/Sync/career/notes/js2024/posting-table3.1lin.csv",	# csv file
 					sep=",",					# character used to delimit columns
 					quotechar='"',				# character used to quote strings
 					skipinitialspace=True,		# True if a space is added after each column delimiter
 					index_col="Filename")		# Name of column to be used as row labels
 
-
 timeNow = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-
 
 
 def matchCheck(df, dfField, yamlField, v=False, dryrun=True, listVals=False):
@@ -95,10 +85,10 @@ def matchCheck(df, dfField, yamlField, v=False, dryrun=True, listVals=False):
 
 
 
-# matchCheck(dbTable, 'Position', "aliases", v=False, dryrun=False, listVals=True)
-# matchCheck(dbTable, 'WP Code', "workplace", v=False, dryrun=False)
-# matchCheck(dbTable, 'Job Type', "job-type", v=False, dryrun=False)
+matchCheck(dbTable, 'Position', "aliases", v=False, dryrun=False, listVals=True)
+matchCheck(dbTable, 'WP Code', "workplace", v=False, dryrun=False)
+matchCheck(dbTable, 'Job Type', "job-type", v=False, dryrun=False)
 matchCheck(dbTable, 'Posted Date', "posted", v=False, dryrun=False)
-# matchCheck(dbTable, 'Status', "status", v=False, dryrun=False)
-# matchCheck(dbTable, 'Link', "link", v=False, dryrun=False)
-# matchCheck(dbTable, "tags", "tags", v=False, dryrun=False, listVals=True)
+matchCheck(dbTable, 'Status', "status", v=False, dryrun=False)
+matchCheck(dbTable, 'Link', "link", v=False, dryrun=False)
+matchCheck(dbTable, "tags", "tags", v=False, dryrun=False, listVals=True)
